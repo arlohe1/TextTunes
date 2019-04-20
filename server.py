@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, request, render_template, session
 from twilio.twiml.messaging_response import MessagingResponse
 import requests
 from credentials import CLIENT_ID, CLIENT_SECRET
@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 user_auth_code = []
 access_token = []
+
+curr_song = []
 
 @app.route("/")
 def start_app():
@@ -41,6 +43,7 @@ def main_app():
     # check if user is currently verified
     if(user_auth_code == []):
         return redirect('/')
+    print(curr_song)
     return render_template("home.html")
 
 
@@ -53,7 +56,11 @@ def not_authorized():
 def get_sms():
     song_name = request.values.get('Body')
     print(song_name)
-    return get_song_link(song_name)
+    curr_song.append(song_name)
+    if len(curr_song) > 1:
+        curr_song.pop(0)
+    return ''
+    #return get_song_link(song_name)
 
 
 def get_song_link(song_title):
