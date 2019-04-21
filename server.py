@@ -44,7 +44,12 @@ def main_app():
     if(user_auth_code == []):
         return redirect('/')
     print(curr_song)
-    return render_template("home.html")
+
+    if curr_song:
+        print(curr_song[0])
+        return render_template("song_list.html", songs=curr_song)
+    else:
+        return render_template("song_list.html")
 
 
 @app.route('/noauth',  methods=['GET'])
@@ -56,11 +61,11 @@ def not_authorized():
 def get_sms():
     song_name = request.values.get('Body')
     print(song_name)
-    curr_song.append(song_name)
+    song_info = get_song_link(song_name)
+    curr_song.append(song_info)
     if len(curr_song) > 1:
         curr_song.pop(0)
     return ''
-    #return get_song_link(song_name)
 
 
 def get_song_link(song_title):
@@ -76,7 +81,14 @@ def get_song_link(song_title):
         print(song['artists'])
         print(song['preview_url'])
         print('-----')
-    return 'done'
+
+    song_info = {}
+
+    if song_list:
+        song_info['name'] = song_list[0]['name']
+        song_info['artist'] = song_list[0]['artists'][0]['name']
+        song_info['preview_url'] = song_list[0]['preview_url']
+    return song_info
 
 
 
