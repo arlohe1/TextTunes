@@ -39,9 +39,22 @@
                     </div>
             </div>
         </div>
-            <div class="container container-fluid">
-                <div id="current-song">
-                </div>
+        <div class="container container-fluid">
+            <!-- div used to hold info about current song  --> 
+            <div id="current-song">
+            </div>
+        </div>
+        <div class="container-fluid">
+            <!-- Spotify Web Player SDK code from their website --> 
+            <script src="https://sdk.scdn.co/spotify-player.js"></script>
+            <script>
+                window.onSpotifyWebPlaybackSDKReady = () => {
+                // You can now initialize Spotify.Player and use the SDK
+                const token = "{{ token }}";
+                const player = new Spotify.Player({ name: 'Web Playback SDK Quick Start Player', getOAuthToken: cb => { cb(token); } });
+                player.connect();
+                }
+            </script>
         </div>
         <div class="container container-fluid">
             <div class="row justify-content-center">

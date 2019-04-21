@@ -12,10 +12,13 @@ curr_song = []
 
 @app.route("/")
 def start_app():
+    print(user_auth_code)
     if(user_auth_code == []):
         # user is not already authorized
-        return  redirect('https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID + '&response_type=code&redirect_uri=http%3A%2F%2Flocalhost:5000%2Frequestauth')
-    return redirect('/app')
+        return  redirect('https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID + '&response_type=code&scope=streaming+user-read-birthdate+user-read-email+user-read-private+playlist-modify-public+playlist-modify-private&redirect_uri=http%3A%2F%2Flocalhost:5000%2Frequestauth')
+    else:
+        print('hello')
+        return redirect('/app')
 
 
 @app.route('/requestauth',  methods=['GET'])
@@ -32,6 +35,7 @@ def request_authorization():
 
         # storing retreived access token
         access_token.append(r['access_token'])
+        print(access_token)
         return redirect('/app')
     else:
         # user denied authorization
@@ -42,18 +46,22 @@ def main_app():
     # check if user is currently verified
     if(user_auth_code == []):
         return redirect('/')
-    print(curr_song)
-
-    if curr_song:
+    print('curr_song', curr_song)
+    print(len(curr_song))
+    print('-----------------------------')
+    print(access_token[0])
+    print('----------------------------------')
+    if len(curr_song) > 0:
         print(curr_song[0])
-        return render_template("song_list.html", songs=curr_song)
+        return render_template("song_list.html", songs=curr_song, token=access_token[0])
     else:
-        return render_template("song_list.html")
+        return render_template("song_list.html", token=access_token[0])
 
 
 @app.route('/noauth',  methods=['GET'])
 def not_authorized():
     return render_template('no_auth.html')
+
 
 # route for receiving sms via Twilio and ngrok
 @app.route("/sms", methods=['POST'])
