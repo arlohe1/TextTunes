@@ -3,6 +3,31 @@
         <title>Amit Lohe</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="./static/styles/style.css" >
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            function loadSong(songs) {
+                console.log(songs)
+                if (songs.length == 0) {
+                    var message = "<p>You currently have no song playing.</p>"
+                    $('#current-song').html(message)
+                } else {
+                    song_info = songs[0]
+                    console.log(song_info['artist'])
+                    console.log(song_info['name'])
+                    var message = "<p>"+song_info['name']+"</p><p>"+song_info['artist']+"</p><a href='"+song_info['preview_url']+"'>Link</a>"
+                    $('#current-song').html(message)
+                }
+            }
+            
+            function getSong() {
+                $.get( "/getsong", function( songs ) {
+                    loadSong(songs)
+                });
+            }
+            
+            window.setInterval(function() { getSong() }, 5000);
+            getSong();
+        </script>
     </head>
     <body>
         <br/>
@@ -15,11 +40,8 @@
             </div>
         </div>
             <div class="container container-fluid">
-            {% for song in songs %}
-           		<p>{{ song.name }}</p>
-           		<p>{{ song.artist }}</p>
-                <a href={{ song.preview_url }} class="btn btn-primary btn-sm">Preview Link</a>
-            {% endfor %}
+                <div id="current-song">
+                </div>
         </div>
         <div class="container container-fluid">
             <div class="row justify-content-center">

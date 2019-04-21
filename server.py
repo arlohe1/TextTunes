@@ -1,5 +1,4 @@
-import os
-from flask import Flask, redirect, request, render_template, session
+from flask import Flask, redirect, request, render_template, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 import requests
 from credentials import CLIENT_ID, CLIENT_SECRET
@@ -92,7 +91,14 @@ def get_song_link(song_title):
 
 
 
-
+@app.route("/getsong", methods=['GET'])
+def get_song():
+    print('---')
+    print(curr_song)
+    if(len(curr_song) == 1):
+        return jsonify(curr_song)
+    else:
+        return jsonify([])
 
 
 
@@ -100,14 +106,11 @@ def get_song_link(song_title):
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
     print('hello')
-
     """Respond to incoming messages with a friendly SMS."""
     # Start our response
     resp = MessagingResponse()
-
     # Add a message
     resp.message("Ahoy! Thanks so much for your message.")
-
     return str(resp)
 '''
 
