@@ -7,30 +7,64 @@
         <script type="text/javascript">
 
             //ajax to check for new song every 5 seconds
-            function loadSong(songs) {
-                console.log(songs)
-                if (songs.length == 0) {
-                    var message = "<p>You currently have no song playing.</p>"
-                    $('#current-song').html(message)
-                } else {
-                    song_info = songs[0]
-                    console.log(song_info['artist'])
-                    console.log(song_info['name'])
-                    var message = "<p>"+song_info['name']+"</p><p>"+song_info['artist']+"</p><a href='"+song_info['preview_url']+"'>Link</a>"
-                    $('#current-song').html(message)
-                }
-            }
+            let token = "{{ token }}"
+
             
             //get request to retrieve new song data
             function getSong() {
-                $.get( "/getsong", function( songs ) {
-                    loadSong(songs)
+                $.ajax({
+                    url: "https://api.spotify.com/v1/me/player/currently-playing",
+                    type: "GET",
+                    beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + token );},
+                    complete: function(x, y) {
+                        if(y == 'nocontent') {
+                            var message = "<p>You currently have no song playing.</p>"
+                            $('#current-song').html(message)
+                        }
+                    },
+                    success: function(data) {
+                        console.log(data)
+                        if(data) {
+                            if(data['is_playing'] == false) {
+                                var message = "<p>You currently have no song playing.</p>"
+                                $('#current-song').html(message)
+                            } else {
+                                name = data['item']['name']
+                                uri = data['item']['uri']
+                                id = data['item']['id']
+                                var message = '<p>'+ name +'</p><p>'+ uri +'</p><p>'+ id +'</p>'
+                                $('#current-song').html(message)
+                            }
+                        }
+                        
+                    }
+                    // if curr song is diff from previous song
+                    // play that song via the playSong function below
                 });
             }
             //setting interval of 5 seconds
             window.setInterval(function() { getSong() }, 5000);
 
             getSong();
+            playSong();
+            function playSong() {
+                let device_id = "{{ device_id }}"
+                $.ajax({
+                    url: "https://api.spotify.com/v1/me/player/play?device_id=" + device_id,
+                    type: "PUT",
+                    beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + token );},
+                    complete: function(x, y) {
+                        console.log(device_id)
+                        console.log('hello');
+                    },
+                    success: function(data) { 
+                        console.log('playing')
+                    }
+                });
+            }
+            
+
+
         </script>
     </head>
     <body>
@@ -64,45 +98,7 @@
             -->
 
             <script type="text/javascript">
-                const token = "{{ token }}";
-                let device_id = null;
-                // retrieving list of user's devices.
-                $.ajax({
-                    url: "https://api.spotify.com/v1/me/player/devices",
-                    type: "GET",
-                    beforeSend: function(xhr){
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + token );
-                    },
-                    complete: function(x, y) {
-                        console.log('COMPLETE')
-                    },
-                    success: function(data) { 
-                        let devices = data['devices'];
-                        console.log(devices);
-                        // selecting device on which to play
-                        for(i in devices) {
-                            if(devices[i]['name'] == 'ARLOHE'){
-                                device_id = devices[i]['id'];
-                                console.log(device_id)
-                                // calling method to play song once device id has been set
-                                playWebSDK();
-                            }
-                        }
-                        
-                    }
-                });
-
-                playWebSDK = function() {
-                    $.ajax({
-                            url: "https://api.spotify.com/v1/me/player/play?device_id=" + device_id,
-                            type: "PUT",
-                            data: '{"uris": ["spotify:track:6u7jPi22kF8CTQ3rb9DHE7"]}',
-                            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + token );},
-                            success: function(data) { 
-                                console.log(data)
-                            }
-                        });
-                }
+                
             </script>
         </div>
         <div class="container container-fluid">

@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title>Amit Lohe</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="./static/styles/style.css" >
+    </head>
+    <body>
+        <br/>
+        <div class="container container-fluid">
+            <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <h1 id="name"><a href="/">Amit Lohe</a></h1>
+                        <hr>
+                    </div>
+            </div>
+        </div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    {% for playlist in playlists %}
+                        <p><a href='/app?playlist_id={{ playlist.id }}'>{{ playlist.name }}</a></p>
+                        <p>{{ playlist.id }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="container container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <hr>
+                    <p class="text-center">Made with ❤️ in Philadelphia.</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
