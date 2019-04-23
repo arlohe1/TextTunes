@@ -15,7 +15,7 @@ def start_app():
     print(user_auth_code)
     if(user_auth_code == []):
         # user is not already authorized
-        return  redirect('https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID + '&response_type=code&scope=streaming+user-read-birthdate+user-read-email+user-read-private+playlist-modify-public+playlist-modify-private&redirect_uri=http%3A%2F%2Flocalhost:5000%2Frequestauth')
+        return  redirect('https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID + '&response_type=code&scope=streaming+user-read-birthdate+user-read-email+user-read-private+playlist-modify-public+playlist-modify-private+user-read-playback-state+user-modify-playback-state&redirect_uri=http%3A%2F%2Flocalhost:5000%2Frequestauth')
     else:
         print('hello')
         return redirect('/app')

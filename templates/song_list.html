@@ -2,9 +2,11 @@
     <head>
         <title>Amit Lohe</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="./static/styles/style.css" >
+        <!--<link rel="stylesheet" href="./static/styles/style.css" >-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript">
+
+            //ajax to check for new song every 5 seconds
             function loadSong(songs) {
                 console.log(songs)
                 if (songs.length == 0) {
@@ -19,13 +21,15 @@
                 }
             }
             
+            //get request to retrieve new song data
             function getSong() {
                 $.get( "/getsong", function( songs ) {
                     loadSong(songs)
                 });
             }
-            
+            //setting interval of 5 seconds
             window.setInterval(function() { getSong() }, 5000);
+
             getSong();
         </script>
     </head>
@@ -45,14 +49,59 @@
             </div>
         </div>
         <div class="container-fluid">
+            <!-- the SDK wasn't appearing in a user's devices all the time, so for now let's not use it, but we should probably figure it out  --> 
             <!-- Spotify Web Player SDK code from their website --> 
+            <!--
             <script src="https://sdk.scdn.co/spotify-player.js"></script>
             <script>
                 window.onSpotifyWebPlaybackSDKReady = () => {
-                // You can now initialize Spotify.Player and use the SDK
+                    // You can now initialize Spotify.Player and use the SDK
+                    const token = "{{ token }}";
+                    const player = new Spotify.Player({ name: 'Web Playback SDK Quick Start Player', getOAuthToken: cb => { cb(token); } });
+                    player.connect();
+                }              
+            </script>
+            -->
+
+            <script type="text/javascript">
                 const token = "{{ token }}";
-                const player = new Spotify.Player({ name: 'Web Playback SDK Quick Start Player', getOAuthToken: cb => { cb(token); } });
-                player.connect();
+                let device_id = null;
+                // retrieving list of user's devices.
+                $.ajax({
+                    url: "https://api.spotify.com/v1/me/player/devices",
+                    type: "GET",
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + token );
+                    },
+                    complete: function(x, y) {
+                        console.log('COMPLETE')
+                    },
+                    success: function(data) { 
+                        let devices = data['devices'];
+                        console.log(devices);
+                        // selecting device on which to play
+                        for(i in devices) {
+                            if(devices[i]['name'] == 'ARLOHE'){
+                                device_id = devices[i]['id'];
+                                console.log(device_id)
+                                // calling method to play song once device id has been set
+                                playWebSDK();
+                            }
+                        }
+                        
+                    }
+                });
+
+                playWebSDK = function() {
+                    $.ajax({
+                            url: "https://api.spotify.com/v1/me/player/play?device_id=" + device_id,
+                            type: "PUT",
+                            data: '{"uris": ["spotify:track:6u7jPi22kF8CTQ3rb9DHE7"]}',
+                            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + token );},
+                            success: function(data) { 
+                                console.log(data)
+                            }
+                        });
                 }
             </script>
         </div>
