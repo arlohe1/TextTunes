@@ -88,7 +88,7 @@ def main_app():
     print(curr_device)
     print('--------------------------------------------------------')
     # hardcoding the device id because i have no clue why it isnt being passed on
-    device_id = curr_device(0)
+    device_id = curr_device[0]
     return render_template("song_list.html", token=access_token[0], device_id=device_id)
 
 @app.route('/noauth',  methods=['GET'])
