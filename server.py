@@ -59,7 +59,7 @@ def choose_device():
 def choose_playlist():
     device_id = request.args.get('device_id')
     print(device_id)
-    curr_device = [device_id]
+    curr_device.append((device_id))
     print('----')
     print(curr_device)
     print('-----')
@@ -88,7 +88,7 @@ def main_app():
     print(curr_device)
     print('--------------------------------------------------------')
     # hardcoding the device id because i have no clue why it isnt being passed on
-    device_id = 'dd3cc946431f8b0ae482c5e38abe84f01e0c785c'
+    device_id = curr_device(0)
     return render_template("song_list.html", token=access_token[0], device_id=device_id)
 
 @app.route('/noauth',  methods=['GET'])
