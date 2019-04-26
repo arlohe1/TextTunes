@@ -17,8 +17,9 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     {% for playlist in playlists %}
-                        <p><a href='/app?playlist_id={{ playlist.id }}'>{{ playlist.name }}</a></p>
+                        <p><a href='/app?user_uri={{ playlist.owner.uri }}&playlist_id={{ playlist.id }}'>{{ playlist.name }}</a></p>
                         <p>{{ playlist.id }}</p>
+                        <p>{{ playlist.owner.uri }}</p>
                     {% endfor %}
                 </div>
             </div>

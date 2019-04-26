@@ -13,12 +13,10 @@ curr_playlist = []
 
 @app.route("/")
 def start_app():
-    print(user_auth_code)
     if(user_auth_code == []):
         # user is not already authorized
         return  redirect('https://accounts.spotify.com/authorize?client_id=' + CLIENT_ID + '&response_type=code&scope=streaming+user-read-birthdate+playlist-read-private+user-read-email+user-read-private+playlist-modify-public+playlist-modify-private+user-read-playback-state+user-modify-playback-state+user-read-currently-playing&redirect_uri=http%3A%2F%2Flocalhost:5000%2Frequestauth')
     else:
-        print('hello')
         return redirect('/choosedevice')
 
 
@@ -36,7 +34,8 @@ def request_authorization():
 
         # storing retreived access token
         access_token.append(r['access_token'])
-        print(access_token)
+        if(len(access_token) > 1):
+            access_token.pop(0)
         return redirect('/choosedevice')
     else:
         # user denied authorization
@@ -51,25 +50,20 @@ def choose_device():
     params = {'access_token' : access_token[0]}
     spotify_api_response = requests.get(spotify_url, params=params).json()
     devices = spotify_api_response['devices']
-    print(devices)
     return render_template('choose_device.html', devices=devices)
-    # printing info about retreived songs
 
 @app.route('/chooseplaylist', methods=['GET'])
 def choose_playlist():
     device_id = request.args.get('device_id')
-    print(device_id)
-    curr_device.append((device_id))
-    print('----')
-    print(curr_device)
-    print('-----')
-    spotify_url =' https://api.spotify.com/v1/me/playlists'
+    curr_device.append(device_id)
+    if(len(curr_device) > 1):
+        curr_device.pop(0)
+    spotify_url ='https://api.spotify.com/v1/me/playlists'
     params = {'access_token' : access_token[0], 'limit' : '50'}
     spotify_api_response = requests.get(spotify_url, params=params).json()
     playlists = spotify_api_response['items']
     for playlist in playlists:
-        print(playlist['name'])
-
+        print(playlist)
     return render_template('choose_playlist.html', playlists=playlists)
 
 
@@ -81,15 +75,15 @@ def main_app():
     if(user_auth_code == []):
         return redirect('/')
     playlist_id = request.args.get('playlist_id')
-    curr_playlist = [playlist_id]
-    print('-----------------------------------------------')
-    print(curr_playlist)
-    # WHY IS THIS LIST EMPTY
-    print(curr_device)
-    print('--------------------------------------------------------')
-    # hardcoding the device id because i have no clue why it isnt being passed on
-    device_id = curr_device[0]
-    return render_template("song_list.html", token=access_token[0], device_id=device_id)
+    user_uri = request.args.get('user_uri')
+    curr_playlist.append(playlist_id)
+    if(len(curr_playlist) > 1):
+        curr_playlist.pop(0)
+    spotify_url ='https://api.spotify.com/v1/me'
+    params = {'access_token' : access_token[0]}
+    spotify_api_response = requests.get(spotify_url, params=params).json()
+    print(spotify_api_response)
+    return render_template("song_list.html", token=access_token[0], device_id=curr_device[0], playlist_id=curr_playlist[0], user_uri=user_uri)
 
 @app.route('/noauth',  methods=['GET'])
 def not_authorized():
@@ -101,7 +95,6 @@ def not_authorized():
 def get_sms():
     song_name = '\"' + request.values.get('Body') +'\"'
     song_info = get_song_link(song_name)
-    print('done---------------------------------------------------------------------------------')
     return ''
 
 
@@ -111,13 +104,6 @@ def get_song_link(song_name):
     params = {'q': song_name, 'type': 'track', 'access_token' : access_token[0], 'limit' : '2'}
     spotify_api_response = requests.get(spotify_url, params=params).json()
     song_list = spotify_api_response['tracks']['items']
-    # printing info about retreived songs
-    for song in song_list:
-        print(song['name'])
-        print(song['artists'])
-        print(song['preview_url'])
-        print(song['uri'])
-        print('-----')
 
     song_info = {}
 
@@ -127,16 +113,7 @@ def get_song_link(song_name):
         song_info['preview_url'] = song_list[0]['preview_url']
         song_info['uri'] = song_list[0]['uri']
 
-    print('-----------------------------------------------')
-    print(curr_playlist)
-    print(access_token)
-    print('--------------------------------------------------------')
-    r = requests.post('https://api.spotify.com/v1/playlists/4Oz5McF8P1WSppLomN8D5Q/tracks?uris='+ song_info["uri"], headers={'Authorization': 'Bearer ' + access_token[0]}).json()
-    # r = requests.post('https://api.spotify.com/v1/playlists/'+curr_playlist[0]+'/tracks', data=payload).json()
-    print('---11111111--------')
-    print(r)
-    print('---11111111--------')
-
+    r = requests.post('https://api.spotify.com/v1/playlists/'+ curr_playlist[0] +'/tracks?uris='+ song_info["uri"], headers={'Authorization': 'Bearer ' + access_token[0]}).json()
 
     return song_info
 
@@ -144,27 +121,10 @@ def get_song_link(song_name):
 
 @app.route("/getsong", methods=['GET'])
 def get_song():
-    print('---')
-    print(curr_song)
     if(len(curr_song) == 1):
         return jsonify(curr_song)
     else:
         return jsonify([])
-
-
-
-'''
-@app.route("/sms", methods=['GET', 'POST'])
-def sms_ahoy_reply():
-    print('hello')
-    """Respond to incoming messages with a friendly SMS."""
-    # Start our response
-    resp = MessagingResponse()
-    # Add a message
-    resp.message("Ahoy! Thanks so much for your message.")
-    return str(resp)
-'''
-
 
 
 

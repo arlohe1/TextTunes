@@ -49,16 +49,26 @@
             playSong();
             function playSong() {
                 let device_id = "{{ device_id }}"
+                let playlist_id = "{{ playlist_id }}"
+                let user_uri = "{{ user_uri }}"
+                let context_uri = ""+user_uri+':playlist:'+ playlist_id;
                 $.ajax({
                     url: "https://api.spotify.com/v1/me/player/play?device_id=" + device_id,
                     type: "PUT",
+                    data: "{\"context_uri\":\""+context_uri+"\"}",
                     beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + token );},
                     complete: function(x, y) {
-                        console.log(device_id)
-                        console.log('hello');
+                        console.log(user_uri)
+                        console.log(context_uri);
+                        console.log('-')
+                        console.log(y)
+
                     },
                     success: function(data) { 
                         console.log('playing')
+                        console.log('------')
+                        console.log(data)
+                        console.log('------')
                     }
                 });
             }
