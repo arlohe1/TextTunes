@@ -1,27 +1,120 @@
 <html>
     <head>
-        <title>Amit Lohe</title>
+        <title>Choose Your Device</title>
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="./static/styles/style.css" >
     </head>
     <body>
+    <style type="text/css">
+   body { background-color: rgb(255,189,89); }
+
+   .button {
+  display: inline-block !important;
+  border-radius: 4px !important;
+  background-color: #fdfd96 !important;
+  border: none !important;
+  color: #000000 !important;
+  text-align: center !important;
+  font-size: 18px !important;
+  padding: 7px !important;
+  width: 400px !important;
+  transition: all 0.5s !important;
+  cursor: pointer !important;
+  margin: 5px !important;
+  font-family: 'Lato', sans-serif;
+}
+
+.button span {
+  cursor: pointer !important;
+  display: inline-block !important;
+  position: relative !important;
+  transition: 0.5s !important;
+}
+
+.button span:after {
+  content: '\00bb' !important;
+  position: absolute !important;
+  opacity: 0 !important;
+  top: 0 !important;
+  right: -20px !important;
+  transition: 0.5s !important;
+}
+
+.button:hover span {
+  padding-right: 25px !important;
+}
+
+.button:hover span:after {
+  opacity: 1 !important;
+  right: 0 !important;
+}
+
+#popin {
+    margin-top: 25px;
+    font-size: 21px;
+    text-align: center;
+    -webkit-animation-delay: 10s;
+          animation-delay: 10s;
+
+    -webkit-animation: fadein 3s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 3s; /* Firefox < 16 */
+        -ms-animation: fadein 3s; /* Internet Explorer */
+         -o-animation: fadein 3s; /* Opera < 12.1 */
+            animation: fadein 3s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+</style>
         <br/>
         <div class="container container-fluid">
-            <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <h1 id="name"><a href="/">Amit Lohe</a></h1>
-                        <hr>
-                    </div>
+            <div class="row justify-content-left">
+                        <h1 id="name"><a href="/"><img src="/static/logo.png" height="50"></a></h1>
             </div>
         </div>
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    {% for device in devices %}
-                        <p><a href='/chooseplaylist?device_id={{ device.id }}'>{{ device.name }}</a></p>
-                        <p>{{ device.id }}</p>
-                    {% endfor %}
-                </div>
+        <div class="container container-fluid">
+            <div id="popin" class="row justify-content-center">
+                <h1>Choose Your Device</h1>
+                <h6><b>Don't see your device?</b> Make sure Spotify is open on your device and your device is connected to the internet.</h6>
             </div>
+            <div class="row justify-content-center">
+            </div>
+            <div class="row justify-content-center">
+                <ul class="list-group">
+
+                {% for device in devices %}
+                        <li class="button list-group-item"><a href='/chooseplaylist?device_id={{ device.id }}'>{{ device.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
         <div class="container container-fluid">
             <div class="row justify-content-center">
