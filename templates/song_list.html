@@ -1,11 +1,98 @@
 <html>
     <head>
-        <title>Amit Lohe</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+        <title>TextTunes - Play</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <!--<link rel="stylesheet" href="./static/styles/style.css" >-->
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <style type="text/css">
+     body{
+     background-color: #000000;
+   padding: 0px;
+   margin: 0px;
+ }
+
+#gradient
+{
+  width: 100%;
+  height: 800px;
+  padding: 0px;
+  margin: 0px;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+</style>
         <script type="text/javascript">
+
+
+var colors = new Array(
+  [62,35,255],
+  [60,255,60],
+  [255,35,98],
+  [45,175,230],
+  [255,0,255],
+  [255,128,0]);
+
+var step = 0;
+//color table indices for:
+// current color left
+// next color left
+// current color right
+// next color right
+var colorIndices = [0,1,2,3];
+
+//transition speed
+var gradientSpeed = 0.001;
+
+function updateGradient()
+{
+
+  if ( $===undefined ) return;
+
+var c0_0 = colors[colorIndices[0]];
+var c0_1 = colors[colorIndices[1]];
+var c1_0 = colors[colorIndices[2]];
+var c1_1 = colors[colorIndices[3]];
+
+var istep = 1 - step;
+var r1 = Math.round(istep * c0_0[0] + step * c0_1[0]);
+var g1 = Math.round(istep * c0_0[1] + step * c0_1[1]);
+var b1 = Math.round(istep * c0_0[2] + step * c0_1[2]);
+var color1 = "rgb("+r1+","+g1+","+b1+")";
+
+var r2 = Math.round(istep * c1_0[0] + step * c1_1[0]);
+var g2 = Math.round(istep * c1_0[1] + step * c1_1[1]);
+var b2 = Math.round(istep * c1_0[2] + step * c1_1[2]);
+var color2 = "rgb("+r2+","+g2+","+b2+")";
+
+ $('#gradient').css({
+   background: "-webkit-gradient(linear, left top, right top, from("+color1+"), to("+color2+"))"}).css({
+    background: "-moz-linear-gradient(left, "+color1+" 0%, "+color2+" 100%)"});
+
+  step += gradientSpeed;
+  if ( step >= 1 )
+  {
+    step %= 1;
+    colorIndices[0] = colorIndices[1];
+    colorIndices[2] = colorIndices[3];
+
+    //pick two new target color indices
+    //do not pick the same as the current one
+    colorIndices[1] = ( colorIndices[1] + Math.floor( 1 + Math.random() * (colors.length - 1))) % colors.length;
+    colorIndices[3] = ( colorIndices[3] + Math.floor( 1 + Math.random() * (colors.length - 1))) % colors.length;
+
+  }
+}
+
+setInterval(updateGradient,10);
 
             //ajax to check for new song every 5 seconds
             let token = "{{ token }}"
@@ -29,12 +116,18 @@
                             if(data['is_playing'] == false) {
                                 var message = "<p>You currently have no song playing.</p>"
                                 $('#current-song').html(message)
+                                playSong();
                             } else {
                                 name = data['item']['name']
                                 uri = data['item']['uri']
                                 id = data['item']['id']
-                                var message = '<p>'+ name +'</p><p>'+ uri +'</p><p>'+ id +'</p>'
+                                artist = data['item']['artists'][0]['name']
+                                img_url = data['item']['album']['images'][0]['url']
+                                console.log(data['item']);
+                                var message = '<h1 class="display-4">' + name + ' - ' + artist + '</h1>'
+                                // '<p>'+ name +'</p><p>'+ uri +'</p><p>'+ id +'</p>'
                                 $('#current-song').html(message)
+                                $('#album-img').html('<img src=' + img_url + ' alt="" width="200" height="200" style="border-radius: 5px;">');
                             }
                         }
                         
@@ -79,19 +172,29 @@
         </script>
     </head>
     <body>
+    <div id="gradient" />
         <br/>
         <div class="container container-fluid">
-            <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <h1 id="name"><a href="/">Amit Lohe</a></h1>
-                        <hr>
-                    </div>
+            <div class="row justify-content-left">
+                        <h1 id="name"><a href="/"><img src="/static/logotransparent.png" height="50"></a></h1>
             </div>
         </div>
         <div class="container container-fluid">
-            <!-- div used to hold info about current song  --> 
-            <div id="current-song">
+            <div class="row justify-content-center">
+                <div class="col-md-3" id="album-img">
+
+                </div>
+                <div class="col-md-5" style="min-height: 300px;">
+                    <div class="jumbotron">
+                        <!-- div used to hold info about current song  -->
+                        <marquee>
+                         <div id="current-song">
+                         </div>
+                            </marquee>
+                    </div>
+                </div>
             </div>
+
         </div>
         <div class="container-fluid">
             <!-- the SDK wasn't appearing in a user's devices all the time, so for now let's not use it, but we should probably figure it out  --> 
