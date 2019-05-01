@@ -2,6 +2,7 @@ from flask import Flask, redirect, request, render_template, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 import requests
 from credentials import CLIENT_ID, CLIENT_SECRET
+from song import Song
 
 app = Flask(__name__)
 
@@ -116,6 +117,12 @@ def get_song_link(song_name):
         song_info['artist'] = song_list[0]['artists'][0]['name']
         song_info['preview_url'] = song_list[0]['preview_url']
         song_info['uri'] = song_list[0]['uri']
+
+    my_song = Song(song_info['name'], song_info['artist'], song_info['preview_url'], song_info['uri'])
+    print(my_song.get_name())
+    print(my_song.get_artist())
+    print(my_song.get_url())
+    print(my_song.get_uri())
 
     r = requests.post('https://api.spotify.com/v1/playlists/'+ curr_playlist[0] +'/tracks?uris='+ song_info["uri"], headers={'Authorization': 'Bearer ' + access_token[0]}).json()
 
