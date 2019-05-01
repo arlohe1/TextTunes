@@ -6,6 +6,7 @@ from song import Song
 
 app = Flask(__name__)
 
+# variables to keep track of current settings
 user_auth_code = []
 access_token = []
 curr_song = []
@@ -24,7 +25,7 @@ def start_app():
     else:
         return redirect('/choosedevice')
 
-
+# need to have authorization from Spotify
 @app.route('/requestauth',  methods=['GET'])
 def request_authorization():
     code = request.args.get('code');
@@ -46,7 +47,7 @@ def request_authorization():
         # user denied authorization
         return redirect('/noauth')
 
-
+# route for choosing device
 @app.route('/choosedevice', methods=['GET'])
 def choose_device():
     spotify_url = 'https://api.spotify.com/v1/me/player/devices'
@@ -57,6 +58,7 @@ def choose_device():
     devices = spotify_api_response['devices']
     return render_template('choose_device.html', devices=devices)
 
+# route for choosing playlist
 @app.route('/chooseplaylist', methods=['GET'])
 def choose_playlist():
     device_id = request.args.get('device_id')
@@ -118,6 +120,7 @@ def get_song_link(song_name):
         song_info['preview_url'] = song_list[0]['preview_url']
         song_info['uri'] = song_list[0]['uri']
 
+    # storing songs in Song class
     my_song = Song(song_info['name'], song_info['artist'], song_info['preview_url'], song_info['uri'])
     print(my_song.get_name())
     print(my_song.get_artist())

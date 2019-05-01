@@ -1,3 +1,5 @@
+
+# this class is used to store pertinent data for a given song on Spotify
 class Song:
     def __init__(self, name, artist, preview_url, uri):
         self.name = name
