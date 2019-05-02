@@ -131,15 +131,12 @@ def get_song_link(song_name):
 
     return song_info
 
-
-
 @app.route("/getsong", methods=['GET'])
 def get_song():
     if(len(curr_song) == 1):
         return jsonify(curr_song)
     else:
         return jsonify([])
-
 
 
 if __name__ == "__main__":

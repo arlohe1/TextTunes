@@ -1,3 +1,4 @@
+import datetime
 
 # this class is used to store pertinent data for a given song on Spotify
 class Song:
@@ -6,6 +7,7 @@ class Song:
         self.artist = artist
         self.preview_url = preview_url
         self.uri = uri
+        self.time = datetime.datetime.now()
 
     def get_name(self):
         return self.name
@@ -18,3 +20,6 @@ class Song:
 
     def get_uri(self):
         return self.uri
+
+    def get_time(self):
+        return self.time
