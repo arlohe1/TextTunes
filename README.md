@@ -1,4 +1,4 @@
-# CIS192Final
+# Text Tunes - CIS192 Final Project
 
 ## Installation Instructions
 This application can run locally on your device. Git clone this repository and pip install requirements.txt. Before running the application, you must create your own unique python file called "credentials.py", with a variable "CLIENT_ID" holding your unique client ID for Spotify, and another variable "CLIENT_SECRET" holding your secret key. This must be included in order to connect properly to Spotify. You can then cd into the main directory of this repository, and run the command "python server.py". The application should now be running on your localhost, port 5000.
